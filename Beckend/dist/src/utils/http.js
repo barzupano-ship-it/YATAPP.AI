@@ -11,7 +11,8 @@ class HttpError extends Error {
 }
 exports.HttpError = HttpError;
 function parseId(value, fieldName = "id") {
-    const parsed = Number.parseInt(value, 10);
+    const str = Array.isArray(value) ? value[0] : value;
+    const parsed = Number.parseInt(String(str ?? ""), 10);
     if (!Number.isInteger(parsed) || parsed <= 0) {
         throw new HttpError(400, `Invalid ${fieldName}`);
     }

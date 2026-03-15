@@ -797,7 +797,7 @@ orderRouter.post(
       throw new HttpError(403, "Forbidden");
     }
 
-    const cancellableStatuses = [OrderStatus.PENDING, OrderStatus.ACCEPTED];
+    const cancellableStatuses: OrderStatus[] = [OrderStatus.PENDING, OrderStatus.ACCEPTED];
     if (!cancellableStatuses.includes(order.status)) {
       throw new HttpError(400, "Order can only be cancelled before preparation starts");
     }

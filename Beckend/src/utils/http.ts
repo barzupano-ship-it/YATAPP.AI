@@ -7,8 +7,9 @@ export class HttpError extends Error {
   }
 }
 
-export function parseId(value: string, fieldName = "id"): number {
-  const parsed = Number.parseInt(value, 10);
+export function parseId(value: string | string[] | undefined, fieldName = "id"): number {
+  const str = Array.isArray(value) ? value[0] : value;
+  const parsed = Number.parseInt(String(str ?? ""), 10);
   if (!Number.isInteger(parsed) || parsed <= 0) {
     throw new HttpError(400, `Invalid ${fieldName}`);
   }

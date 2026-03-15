@@ -2,7 +2,9 @@
   "name": "yatapp",
   "private": true,
   "scripts": {
-    "start": "npm start --prefix YATAPPAI",
+    "build": "cd Beckend && npm install && npm run build",
+    "start": "cd Beckend && npm start",
+    "start:app": "npm start --prefix YATAPPAI",
     "start:tunnel": "npm run start:tunnel --prefix YATAPPAI",
     "start:clear": "npm run start:clear --prefix YATAPPAI",
     "web": "npm run web --prefix YATAPPAI",
