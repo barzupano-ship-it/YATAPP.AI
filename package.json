@@ -2,7 +2,10 @@
   "name": "yatapp",
   "private": true,
   "engines": {
-    "node": ">=20.19"
+    "node": ">=18.18"
+  },
+  "devDependencies": {
+    "prisma": "6.19.2"
   },
   "scripts": {
     "build": "cd Beckend && npm install && npm run build",
@@ -14,5 +17,8 @@
     "backend": "npm run dev --prefix Beckend",
     "dashboard": "npm run dev --prefix restaurant-dashboard",
     "courier-panel": "npm run dev --prefix courier-company-dashboard"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2"
   }
 }

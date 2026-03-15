@@ -9,6 +9,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model _Placeholder {
+model Placeholder {
   id Int @id @default(autoincrement())
 }
