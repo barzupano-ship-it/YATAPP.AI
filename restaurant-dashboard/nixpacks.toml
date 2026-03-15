@@ -1,0 +1,6 @@
+# Next.js - no Prisma
+[phases.build]
+cmds = ["npm install && npm run build"]
+
+[start]
+cmd = "npm start"

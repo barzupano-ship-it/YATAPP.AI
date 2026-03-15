@@ -1,0 +1,14 @@
+// Placeholder schema for Railway build - npx prisma generate requires a schema file
+// The actual backend (Beckend) uses its own schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model _Placeholder {
+  id Int @id @default(autoincrement())
+}

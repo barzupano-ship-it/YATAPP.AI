@@ -1,6 +1,6 @@
-# Beckend: simple Express server, no Prisma
+# Beckend: full build with Prisma
 [phases.build]
-cmds = ["npm install && npm run build"]
+cmds = ["npm install && npx prisma generate && npm run build"]
 
 [start]
-cmd = "npm start"
+cmd = "npx prisma migrate deploy && npm start"

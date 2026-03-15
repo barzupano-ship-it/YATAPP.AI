@@ -1,6 +1,4 @@
-# Override Nixpacks: do NOT run prisma generate (project uses simple Express server)
-[phases.build]
-cmds = ["npm install && npm run build"]
-
-[start]
-cmd = "npm start"
+# Railway build - prisma/schema.prisma in root satisfies npx prisma generate
+[variables]
+# Dummy URL for prisma generate during build (no DB connection needed)
+DATABASE_URL = "postgresql://localhost:5432/dummy"
