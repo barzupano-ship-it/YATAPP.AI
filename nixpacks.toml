@@ -1,0 +1,6 @@
+# Override Nixpacks: do NOT run prisma generate (project uses simple Express server)
+[phases.build]
+cmds = ["npm install && npm run build"]
+
+[start]
+cmd = "npm start"
