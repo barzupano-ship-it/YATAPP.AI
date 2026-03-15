@@ -1,6 +1,9 @@
 {
   "name": "yatapp",
   "private": true,
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "build": "cd Beckend && npm install && npm run build",
     "start": "cd Beckend && npm start",

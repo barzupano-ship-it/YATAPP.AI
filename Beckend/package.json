@@ -23,6 +23,9 @@
   "author": "",
   "license": "ISC",
   "description": "Backend API for restaurant dashboard, customer app, and delivery app.",
+  "engines": {
+    "node": ">=20.19"
+  },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
