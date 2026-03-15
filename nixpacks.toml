@@ -1,4 +1,1 @@
-# Railway build - prisma/schema.prisma in root satisfies npx prisma generate
-[variables]
-# Dummy URL for prisma generate during build (no DB connection needed)
-DATABASE_URL = "postgresql://localhost:5432/dummy"
+# Root: do NOT set DATABASE_URL here - Railway injects it at runtime from yatapp-db
