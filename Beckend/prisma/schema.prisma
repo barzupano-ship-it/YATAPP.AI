@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  CUSTOMER
+  RESTAURANT
+  COURIER
+  COURIER_COMPANY
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  PREPARING
+  READY
+  PICKED_UP
+  DELIVERING
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id                  Int          @id @default(autoincrement())
+  name                String
+  email               String       @unique
+  phone               String?
+  firstName           String?
+  lastName            String?
+  profilePhoto        String?
+  passportPhoto       String?
+  inn                 String?
+  passportNumber      String?
+  passwordHash        String
+  role                UserRole
+  isModerator         Boolean      @default(false)
+  isActive            Boolean      @default(true)
+  restaurants         Restaurant[] @relation("RestaurantOwner")
+  customerOrders      Order[]      @relation("CustomerOrders")
+  courierOrders       Order[]      @relation("CourierOrders")
+  courierCompanyId    Int?
+  courierCompany      CourierCompany? @relation("CourierCompanyCouriers", fields: [courierCompanyId], references: [id], onDelete: SetNull)
+  courierCompanyOwner CourierCompany[] @relation("CourierCompanyOwner")
+  archiveHidden       CourierArchiveHidden[]
+  addresses           Address[]
+  pushToken           String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+}
+
+model Restaurant {
+  id                 Int            @id @default(autoincrement())
+  ownerId            Int
+  owner              User           @relation("RestaurantOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  name               String
+  address            String
+  city               String?
+  description        String?
+  phone              String?
+  email              String?
+  cuisine            String?
+  logo               String?
+  coverImage         String?
+  deliveryTime       Int            @default(30)
+  openingHours       String?
+  deliveryRadius     Float?
+  isActive           Boolean        @default(true)
+  latitude           Float?
+  longitude          Float?
+  googleMapsUrl      String?
+  alifBankCardNumber String?
+  alifBankWalletNumber String?
+  dcBankCardNumber   String?
+  dcBankWalletNumber String?
+  categories         MenuCategory[]
+  menuItems          MenuItem[]
+  orders             Order[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+}
+
+model MenuCategory {
+  id           Int        @id @default(autoincrement())
+  restaurantId Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  name         String
+  sortOrder    Int        @default(0)
+  items        MenuItem[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([restaurantId, name])
+}
+
+model MenuItem {
+  id           Int          @id @default(autoincrement())
+  restaurantId Int
+  categoryId   Int
+  restaurant   Restaurant   @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  category     MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  price        Float
+  image        String?
+  available    Boolean      @default(true)
+  orderItems    OrderItem[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Address {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label        String?
+  street       String
+  city         String?
+  postalCode   String?
+  phone        String?
+  latitude     Float?
+  longitude    Float?
+  isDefault    Boolean   @default(false)
+  orders       Order[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Order {
+  id                 Int          @id @default(autoincrement())
+  customerId         Int
+  restaurantId       Int
+  courierId          Int?
+  deliveryAddressId  Int?
+  status             OrderStatus  @default(PENDING)
+  subtotal           Float        @default(0)
+  deliveryFee        Float        @default(0)
+  totalPrice         Float        @default(0)
+  notes              String?
+  deliveryAddress    String
+  pickupAddress      String
+  pickupLatitude     Float?
+  pickupLongitude    Float?
+  deliveryLatitude   Float?
+  deliveryLongitude  Float?
+  deliveryGoogleMapsUrl String?
+  receiptScreenUrl   String?
+  courierLatitude    Float?
+  courierLongitude   Float?
+  acceptedAt         DateTime?
+  pickedUpAt         DateTime?
+  deliveredAt        DateTime?
+  customer           User         @relation("CustomerOrders", fields: [customerId], references: [id], onDelete: Cascade)
+  restaurant         Restaurant   @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  courier            User?        @relation("CourierOrders", fields: [courierId], references: [id], onDelete: SetNull)
+  address            Address?     @relation(fields: [deliveryAddressId], references: [id], onDelete: SetNull)
+  items              OrderItem[]
+  archiveHiddenBy    CourierArchiveHidden[]
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+}
+
+model CourierCompany {
+  id          Int      @id @default(autoincrement())
+  name        String
+  ownerId     Int
+  owner       User     @relation("CourierCompanyOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  deliveryFee Float    @default(12)
+  phone       String?
+  address     String?
+  couriers    User[]   @relation("CourierCompanyCouriers")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CourierArchiveHidden {
+  id        Int      @id @default(autoincrement())
+  courierId Int
+  orderId   Int
+  courier   User     @relation(fields: [courierId], references: [id], onDelete: Cascade)
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([courierId, orderId])
+}
+
+model OrderItem {
+  id                Int      @id @default(autoincrement())
+  orderId           Int
+  menuItemId        Int?
+  nameSnapshot      String
+  priceSnapshot     Float
+  quantity          Int
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem          MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

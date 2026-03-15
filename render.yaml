@@ -1,0 +1,64 @@
+# YATAPP - Blueprint для Render
+# Документация: https://docs.render.com/blueprint-spec
+
+services:
+  # Backend API
+  - type: web
+    name: yatapp-backend
+    runtime: node
+    rootDir: Beckend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: yatapp-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: "*"
+    buildFilter:
+      paths:
+        - Beckend/**
+
+  # Restaurant Dashboard (Next.js)
+  # После деплоя: задайте NEXT_PUBLIC_API_URL = https://yatapp-backend.onrender.com/api в Dashboard
+  - type: web
+    name: yatapp-restaurant-dashboard
+    runtime: node
+    rootDir: restaurant-dashboard
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+    buildFilter:
+      paths:
+        - restaurant-dashboard/**
+
+  # Courier Company Dashboard (Next.js)
+  # После деплоя: задайте NEXT_PUBLIC_API_URL = https://yatapp-backend.onrender.com/api в Dashboard
+  - type: web
+    name: yatapp-courier-panel
+    runtime: node
+    rootDir: courier-company-dashboard
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+    buildFilter:
+      paths:
+        - courier-company-dashboard/**
+
+databases:
+  - name: yatapp-db
+    plan: free
+    # PostgreSQL - бесплатный план (истекает через 90 дней, можно создать новый)
